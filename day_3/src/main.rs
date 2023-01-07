@@ -2,6 +2,8 @@ use std::collections::HashMap;
 
 fn main() {
     let input = get_input();
+
+    // part 1
     let rucksacks = input.split("\n").collect::<Vec<&str>>();
 
     let mut priority_sum = 0;
@@ -18,7 +20,37 @@ fn main() {
         let priority = get_priority_score(common_char);
         priority_sum += priority;
     }
-    println!("Total priority: {}", priority_sum);
+    println!("Total priority for pt1: {}", priority_sum);
+
+    // part 2
+    let split_input = input
+        .split("\n")
+        .collect::<Vec<&str>>()
+        .iter()
+        .map(|rucksack| rucksack.chars().collect::<Vec<char>>())
+        .collect::<Vec<Vec<char>>>();
+
+    let three_rucksack_strings = split_input
+        .chunks(3)
+        .map(|rucksack_group| rucksack_group.to_vec())
+        .collect::<Vec<Vec<Vec<char>>>>();
+
+    let mut priority_sum = 0;
+    for single_group in three_rucksack_strings {
+        let common_key = get_common_key_in_rucksacks(single_group);
+        priority_sum += get_priority_score(common_key);
+    }
+    println!("Total priority for pt2: {}", priority_sum);
+}
+
+fn get_common_key_in_rucksacks(rucksacks: Vec<Vec<char>>) -> char {
+    let set = rucksacks[0].iter().collect::<Vec<&char>>();
+    let set_2 = rucksacks[2].iter().collect::<Vec<&char>>();
+    let common_chars = rucksacks[1]
+        .iter()
+        .filter(|char| set.contains(char) && set_2.contains(char))
+        .collect::<Vec<&char>>();
+    return *common_chars[0];
 }
 
 fn get_common_items(left_side: &[char], right_side: &[char]) -> Option<char> {
